@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "extinguisher"
+version = "0.0.dev0"
+description = "A card game"
+authors = ["Konstantin Kolesnyak <constkolesnyak@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/constkolesnyak/extinguisher"
+
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.2"
+coverage = "^7.3.0"
+
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ['smoke']
+addopts = "-v"
+
+[tool.coverage.run]
+omit = ["tests/*", "__init__.py"]
+
+[tool.coverage.report]
+exclude_also = ["raise NotImplementedError"]
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
