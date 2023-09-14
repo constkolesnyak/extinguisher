@@ -11,16 +11,16 @@ from xshr.deck import CARD_GROUPS, JOKERS
 
 @attrs.define(frozen=True)
 class Pile:
-    _pile: frozenset[Card] = attrs.field(converter=frozenset)
+    _cards: frozenset[Card] = attrs.field(converter=frozenset)
 
     @property
     def jokers(self) -> frozenset[Card]:
-        return self._pile & JOKERS
+        return self._cards & JOKERS
 
     def find(self, mark: Mark) -> frozenset[Card]:
         if isinstance(mark, Suit):
             return reduce(operator.or_, (CARD_GROUPS[suit] for suit in mark))
-        return self._pile & CARD_GROUPS[mark]
+        return self._cards & CARD_GROUPS[mark]
 
     def __iter__(self) -> Iterator[Card]:
-        return iter(self._pile)
+        return iter(self._cards)
