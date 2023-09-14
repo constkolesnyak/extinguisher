@@ -44,6 +44,7 @@ class Suit(Flag):
     SPADES = auto()
     RED = HEARTS | DIAMONDS
     BLACK = CLUBS | SPADES
+    ANY = RED | BLACK
 
     def __str__(self) -> str:
         # if self not in _SUIT_TO_STR:
