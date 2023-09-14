@@ -9,14 +9,14 @@ from xshr.card import Card, Mark, Rank, Suit
 _JOKERS_QUANTITY = 4
 
 
-def _init_jokers(quantity: int = _JOKERS_QUANTITY):
+def _init_jokers(quantity: int = _JOKERS_QUANTITY) -> frozenset[Card]:
     red = ((Suit.RED, id_) for id_ in range(quantity // 2))
-    black = ((Suit.BLACK, id_) for id_ in range(quantity // 2, jokers))
+    black = ((Suit.BLACK, id_) for id_ in range(quantity // 2, quantity))
 
     return frozenset(starmap(partial(Card, None), chain(red, black)))
 
 
-JOKERS = _init_jokers()
+JOKERS: frozenset[Card] = _init_jokers()
 
 DECK = tuple(chain(starmap(Card, product(Rank, Suit)), JOKERS))
 
