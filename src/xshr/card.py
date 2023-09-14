@@ -95,6 +95,10 @@ class Card:
         assert self.suit is not None
         assert (self.rank is None) ^ (self.joker_id is None)
 
+    @classmethod
+    def from_iterable(cls, iterable: Iterable[Any]) -> Self:
+        return cls(*tuple(iterable))
+
     @property
     def is_joker(self) -> bool:
         return self.joker_id is not None
