@@ -6,7 +6,7 @@ from random import SystemRandom
 from xshr.card import Card, Mark, Rank, Suit
 
 _JOKERS_QUANTITY = 4
-JOKERS = set(
+JOKERS = frozenset(
     map(
         Card.from_iterable,
         chain(
