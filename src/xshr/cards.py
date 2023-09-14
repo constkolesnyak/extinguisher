@@ -1,7 +1,10 @@
 from enum import CONTINUOUS, Flag, IntEnum, auto, unique, verify
-from typing import Optional, Self
+from itertools import chain, dropwhile, takewhile
+from pprint import pprint
+from typing import Callable, Optional, Self
 
 import attrs
+from bidict import bidict
 
 
 @unique
@@ -21,14 +24,16 @@ class Rank(IntEnum):
     KING = auto()
     ACE = auto()
 
-    # todo repr?
-
     def __str__(self) -> str:
-        return ''  # todo
+        # if self not in _RANK_TO_STR:
+        #     raise  # todo
+        return _RANK_TO_STR[self]
 
     @classmethod
-    def from_str(cls, rank: str) -> Self:
-        ...  # todo
+    def from_str(cls, suit: str) -> Self:
+        # if self not in _RANK_TO_STR.inv:
+        #     raise  # todo
+        return _RANK_TO_STR.inv[suit]
 
 
 @unique
@@ -40,15 +45,41 @@ class Suit(Flag):
     RED = HEARTS | DIAMONDS
     BLACK = CLUBS | SPADES
 
-    # todo repr?
-
     def __str__(self) -> str:
-        return ''  # todo
+        # if self not in _SUIT_TO_STR:
+        #     raise  # todo
+        return _SUIT_TO_STR[self]
 
     @classmethod
     def from_str(cls, suit: str) -> Self:
-        ...  # todo
+        # if self not in _SUIT_TO_STR.inv:
+        #     raise  # todo
+        return _SUIT_TO_STR.inv[suit]
 
+
+Mark = Rank | Suit
+
+_is_not_jack: Callable[[Rank], bool] = lambda rank: rank != Rank.JACK
+
+_RANK_TO_STR: bidict[Rank, str] = bidict(
+    zip(
+        Rank,
+        chain(
+            (str(rank.value) for rank in takewhile(_is_not_jack, Rank)),
+            (rank.name[0].upper() for rank in dropwhile(_is_not_jack, Rank)),
+        ),
+        strict=True,
+    )
+)
+
+_SUIT_TO_STR: bidict[Suit, str] = bidict(
+    {
+        Suit.HEARTS: '\U00002665',  # ♥
+        Suit.DIAMONDS: '\U00002666',  # ♦
+        Suit.CLUBS: '\U00002663',  # ♣
+        Suit.SPADES: '\U00002660',  # ♠
+    }
+)
 
 _JOKER_STR = '\U0001fa85'  # 🪅
 
@@ -59,9 +90,17 @@ class Card:
     suit: Optional[Suit] = None
     joker_id: Optional[int] = None
 
+    def __attrs_post_init__(self) -> None:
+        assert self.suit is None
+        assert (self.rank is None) ^ (self.joker_id is None)
+
     @property
     def is_joker(self) -> bool:
         return self.joker_id is not None
+
+    # @property #todo?
+    # def marks(self) -> tuple[Mark]:
+    #     return self.rank, self.suit
 
     def __str__(self) -> str:
         return _JOKER_STR if self.is_joker else f'{self.rank}{self.suit}'
