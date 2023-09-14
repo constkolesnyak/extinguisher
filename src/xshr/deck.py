@@ -9,9 +9,9 @@ from xshr.card import Card, Mark, Rank, Suit
 _JOKERS_QUANTITY = 4
 
 
-def _init_jokers(jokers: int = _JOKERS_QUANTITY):
-    red = ((Suit.RED, id_) for id_ in range(jokers // 2))
-    black = ((Suit.BLACK, id_) for id_ in range(jokers // 2, jokers))
+def _init_jokers(quantity: int = _JOKERS_QUANTITY):
+    red = ((Suit.RED, id_) for id_ in range(quantity // 2))
+    black = ((Suit.BLACK, id_) for id_ in range(quantity // 2, jokers))
 
     return frozenset(starmap(partial(Card, None), chain(red, black)))
 
