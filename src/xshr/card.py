@@ -92,7 +92,7 @@ class Card:
     joker_id: Optional[int] = None
 
     def __attrs_post_init__(self) -> None:
-        assert self.suit is None
+        assert self.suit is not None
         assert (self.rank is None) ^ (self.joker_id is None)
 
     @property
