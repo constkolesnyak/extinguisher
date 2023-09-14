@@ -1,7 +1,7 @@
 from enum import CONTINUOUS, Flag, IntEnum, auto, unique, verify
 from itertools import chain, dropwhile, takewhile
 from pprint import pprint
-from typing import Callable, Optional, Self
+from typing import Any, Callable, Iterable, Optional, Self
 
 import attrs
 from bidict import bidict
@@ -58,7 +58,7 @@ class Suit(Flag):
         return _SUIT_TO_STR.inv[suit]
 
 
-Mark = Rank | Suit
+Mark = Optional[Rank | Suit]
 
 _is_not_jack: Callable[[Rank], bool] = lambda rank: rank != Rank.JACK
 
@@ -103,9 +103,9 @@ class Card:
     def is_joker(self) -> bool:
         return self.joker_id is not None
 
-    # @property #todo?
-    # def marks(self) -> tuple[Mark]:
-    #     return self.rank, self.suit
+    @property
+    def marks(self) -> tuple[Mark, Mark]:
+        return self.rank, self.suit
 
     def __str__(self) -> str:
         return _JOKER_STR if self.is_joker else f'{self.rank}{self.suit}'
