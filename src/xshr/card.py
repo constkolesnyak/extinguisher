@@ -1,9 +1,11 @@
 from enum import CONTINUOUS, Flag, IntEnum, auto, unique, verify
-from itertools import chain, dropwhile, takewhile
+from itertools import chain
+from pprint import pprint
 from typing import Callable, Optional, Self
 
 import attrs
 from bidict import bidict
+from more_itertools import split_before
 
 
 class InvalidMarkError(Exception):
@@ -40,10 +42,10 @@ class Rank(IntEnum):
 
 @unique
 class Suit(Flag):
-    HEARTS = auto()
-    DIAMONDS = auto()
     CLUBS = auto()
+    HEARTS = auto()
     SPADES = auto()
+    DIAMONDS = auto()
 
     RED = HEARTS | DIAMONDS
     BLACK = CLUBS | SPADES
@@ -62,26 +64,32 @@ class Suit(Flag):
 
 Mark = Optional[Rank | Suit]
 
-# put inside _init_rank_to_str()
-_is_not_jack: Callable[[Rank], bool] = lambda rank: rank != Rank.JACK
 
-_RANK_TO_STR: bidict[Rank, str] = bidict(  # split inside _init_rank_to_str()
-    zip(
-        Rank,
-        chain(
-            (str(rank.value) for rank in takewhile(_is_not_jack, Rank)),
-            (rank.name[0].upper() for rank in dropwhile(_is_not_jack, Rank)),
-        ),
-        strict=True,
+def _init_rank_to_str() -> bidict[Rank, str]:
+    is_jack: Callable[[Rank], bool] = lambda rank: rank == Rank.JACK
+    rank_numbers, rank_words = split_before(Rank, is_jack)
+
+    strings_of_ranks = chain(
+        (str(rank.value) for rank in rank_numbers),
+        (rank.name[0].upper() for rank in rank_words),
     )
-)
 
+    return bidict(
+        zip(
+            Rank,
+            strings_of_ranks,
+            strict=True,
+        )
+    )
+
+
+_RANK_TO_STR: bidict[Rank, str] = _init_rank_to_str()
 _SUIT_TO_STR: bidict[Suit, str] = bidict(
     {
-        Suit.HEARTS: '\U00002665',  # ♥
-        Suit.DIAMONDS: '\U00002666',  # ♦
         Suit.CLUBS: '\U00002663',  # ♣
+        Suit.HEARTS: '\U00002665',  # ♥
         Suit.SPADES: '\U00002660',  # ♠
+        Suit.DIAMONDS: '\U00002666',  # ♦
     }
 )
 
