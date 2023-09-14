@@ -1,14 +1,14 @@
 from collections import defaultdict
-from itertools import chain, product
+from itertools import chain, product, starmap
 from pprint import pprint
 from random import SystemRandom
 
 from xshr.card import Card, Mark, Rank, Suit
 
 _JOKERS_QUANTITY = 4
-JOKERS = frozenset(
-    map(
-        Card.from_iterable,
+JOKERS = frozenset(  # split inside _init_jokers()
+    starmap(
+        Card,
         chain(
             ((None, Suit.RED, joker_id) for joker_id in range(_JOKERS_QUANTITY // 2)),
             (
@@ -19,7 +19,7 @@ JOKERS = frozenset(
     )
 )
 
-DECK = tuple(chain(map(Card.from_iterable, product(Rank, Suit)), JOKERS))
+DECK = tuple(chain(starmap(Card, product(Rank, Suit)), JOKERS))
 
 
 def new_shuffled_deck() -> list[Card]:

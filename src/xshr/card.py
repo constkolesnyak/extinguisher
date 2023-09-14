@@ -1,7 +1,6 @@
 from enum import CONTINUOUS, Flag, IntEnum, auto, unique, verify
 from itertools import chain, dropwhile, takewhile
-from pprint import pprint
-from typing import Any, Callable, Iterable, Optional, Self
+from typing import Callable, Optional, Self
 
 import attrs
 from bidict import bidict
@@ -42,6 +41,7 @@ class Suit(Flag):
     DIAMONDS = auto()
     CLUBS = auto()
     SPADES = auto()
+
     RED = HEARTS | DIAMONDS
     BLACK = CLUBS | SPADES
     ANY = RED | BLACK
@@ -94,10 +94,6 @@ class Card:
     def __attrs_post_init__(self) -> None:
         assert self.suit is not None
         assert (self.rank is None) ^ (self.joker_id is None)
-
-    @classmethod
-    def from_iterable(cls, iterable: Iterable[Any]) -> Self:
-        return cls(*tuple(iterable))
 
     @property
     def is_joker(self) -> bool:
