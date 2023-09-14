@@ -7,7 +7,5 @@
     "statusBarItem.remoteForeground": "#e7e7e7"
   },
   "peacock.color": "#215732",
-  "cSpell.words": [
-    "softprops"
-  ]
+  "cSpell.words": ["softprops", "xshr"]
 }
