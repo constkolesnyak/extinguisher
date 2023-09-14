@@ -6,6 +6,10 @@ import attrs
 from bidict import bidict
 
 
+class InvalidMarkError(Exception):
+    pass
+
+
 @unique
 @verify(CONTINUOUS)
 class Rank(IntEnum):
@@ -24,15 +28,14 @@ class Rank(IntEnum):
     ACE = auto()
 
     def __str__(self) -> str:
-        # if self not in _RANK_TO_STR:
-        #     raise  # todo
         return _RANK_TO_STR[self]
 
     @classmethod
-    def from_str(cls, suit: str) -> Self:
-        # if self not in _RANK_TO_STR.inv:
-        #     raise  # todo
-        return _RANK_TO_STR.inv[suit]
+    def from_str(cls, rank: str) -> Self:
+        try:
+            return _RANK_TO_STR.inv[rank]
+        except KeyError as exc:
+            raise InvalidMarkError(f"'{rank}' is an invalid rank") from exc
 
 
 @unique
@@ -47,22 +50,22 @@ class Suit(Flag):
     ANY = RED | BLACK
 
     def __str__(self) -> str:
-        # if self not in _SUIT_TO_STR:
-        #     raise  # todo
         return _SUIT_TO_STR[self]
 
     @classmethod
     def from_str(cls, suit: str) -> Self:
-        # if self not in _SUIT_TO_STR.inv:
-        #     raise  # todo
-        return _SUIT_TO_STR.inv[suit]
+        try:
+            return _SUIT_TO_STR.inv[suit]
+        except KeyError as exc:
+            raise InvalidMarkError(f"'{suit}' is an invalid suit") from exc
 
 
 Mark = Optional[Rank | Suit]
 
+# put inside _init_rank_to_str()
 _is_not_jack: Callable[[Rank], bool] = lambda rank: rank != Rank.JACK
 
-_RANK_TO_STR: bidict[Rank, str] = bidict(
+_RANK_TO_STR: bidict[Rank, str] = bidict(  # split inside _init_rank_to_str()
     zip(
         Rank,
         chain(
