@@ -1,4 +1,5 @@
 from collections import defaultdict
+from functools import partial
 from itertools import chain, product, starmap
 from pprint import pprint
 from random import SystemRandom
@@ -6,18 +7,16 @@ from random import SystemRandom
 from xshr.card import Card, Mark, Rank, Suit
 
 _JOKERS_QUANTITY = 4
-JOKERS = frozenset(  # split inside _init_jokers()
-    starmap(
-        Card,
-        chain(
-            ((None, Suit.RED, joker_id) for joker_id in range(_JOKERS_QUANTITY // 2)),
-            (
-                (None, Suit.BLACK, joker_id)
-                for joker_id in range(_JOKERS_QUANTITY // 2, _JOKERS_QUANTITY)
-            ),
-        ),
-    )
-)
+
+
+def _init_jokers(jokers: int = _JOKERS_QUANTITY):
+    red = ((Suit.RED, id_) for id_ in range(jokers // 2))
+    black = ((Suit.BLACK, id_) for id_ in range(jokers // 2, jokers))
+
+    return frozenset(starmap(partial(Card, None), chain(red, black)))
+
+
+JOKERS = _init_jokers()
 
 DECK = tuple(chain(starmap(Card, product(Rank, Suit)), JOKERS))
 
